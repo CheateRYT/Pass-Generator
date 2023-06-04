@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nosifer&display=swap');
+  </style>
+  <link rel="stylesheet" href="style.css">
+  <title>Генератор паролей</title>
+  <script>
+    function generatePassword() {
+  var characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
+  var length = parseInt(document.getElementById("length").value);
+  var password = '';
+
+  for (var i = 0; i < length; i++) {
+    var randomIndex = Math.floor(Math.random() * characters.length);
+    password += characters[randomIndex];
+  }
+
+  var description = document.getElementById("description").value;
+
+  // Получаем ранее сохраненные пароли из localStorage
+  var savedPasswords = JSON.parse(localStorage.getItem("passwords")) || [];
+
+  // Добавляем текущий пароль и описание в список сохраненных паролей
+  savedPasswords.push({ password: password, description: description });
+
+  // Обновляем список сохраненных паролей в localStorage
+  localStorage.setItem("passwords", JSON.stringify(savedPasswords));
+
+  var passwordList = document.getElementById("passwordList");
+  var passwordItem = document.createElement("li");
+  passwordItem.innerHTML = '<strong>Password:</strong> ' + password + '<br><strong>Description:</strong> ' + description;
+  passwordList.appendChild(passwordItem);
+}
+
+// При загрузке страницы получаем ранее сохраненные пароли из localStorage и выводим их
+window.onload = function() {
+  var savedPasswords = JSON.parse(localStorage.getItem("passwords")) || [];
+
+  var passwordList = document.getElementById("passwordList");
+
+  savedPasswords.forEach(function(item) {
+    var passwordItem = document.createElement("li");
+    passwordItem.innerHTML = '<strong>Password:</strong> ' + item.password + '<br><strong>Description:</strong> ' + item.description;
+    passwordList.appendChild(passwordItem);
+  });
+};
+  </script>
+</head>
+<body>
+  <h1>Генератор паролей</h1>
+  <label for="length">Длина пароля (2-40):</label>
+  <input type="number" id="length" min="2" max="40" required>
+  <br>
+  <label for="description">Описание:</label>
+  <input type="text" id="description">
+  <br>
+  <button onclick="generatePassword()">Сгенерировать пароль</button>
+  <h2>Ранее сгенерированные пароли:</h2>
+  <ul id="passwordList"></ul>
+</body>
+</html>
